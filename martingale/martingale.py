@@ -1,4 +1,6 @@
-""""""  		  	   		 	   		  		  		    	 		 		   		 		  
+""""""
+from seaborn.conftest import flat_series
+import matplotlib.pyplot as plt
 """Assess a betting strategy.  		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 Copyright 2018, Georgia Institute of Technology (Georgia Tech)  		  	   		 	   		  		  		    	 		 		   		 		  
@@ -58,16 +60,91 @@ def get_spin_result(win_prob):
     if np.random.random() <= win_prob:  		  	   		 	   		  		  		    	 		 		   		 		  
         result = True  		  	   		 	   		  		  		    	 		 		   		 		  
     return result  		  	   		 	   		  		  		    	 		 		   		 		  
-  		  	   		 	   		  		  		    	 		 		   		 		  
+
+def balch_episode(run=10, win_prob=(18/38), bankroll=0):
+    episode_array = np.full((run,1000), 80)
+    for x in range(run):
+        episode_winnings = 0
+        i=0
+        while i < 1000 and episode_winnings < 80:
+            won = False
+            bet_amount = 1
+            while not won:
+                won = get_spin_result(win_prob)
+                if won == True:
+                    episode_winnings = episode_winnings + bet_amount
+                    episode_array[x,i] = episode_winnings
+                else:
+                    episode_winnings = episode_winnings - bet_amount
+                    bet_amount = bet_amount *2
+                    episode_array[x, i] = episode_winnings
+
+                i = i + 1
+        x = x + 1
+    return episode_array
+
+def plot_fig_1():
+    array = balch_episode(run=10)
+
+    plt.title('fig_1')
+    plt.axis([0, 300, -256, 100])
+    plt.xlabel('Bet #')
+    plt.ylabel('Winnings')
+
+    for i in range(10):
+        plt.plot(array[i])
+
+    plt.show()
+    #plt.savefig('figure_1.png')
+    plt.clf()
+
+def plot_fig_2():
+    array = balch_episode(run=1000)
+
+    plt.title('fig_2')
+    plt.axis([0, 300, -256, 100])
+    plt.xlabel('Bet #')
+    plt.ylabel('Winnings')
+
+    mean = array.mean(axis=0)
+    std = array.std(axis=0)
+
+    plt.plot(mean)
+    plt.plot(mean+std)
+    plt.plot(mean-std)
+    plt.show()
+    #plt.savefig('figure_2.png')
+    plt.clf()
+
+def plot_fig_3():
+    array = balch_episode(run=1000)
+
+    plt.title('fig_3')
+    plt.axis([0, 300, -256, 100])
+    plt.xlabel('Bet #')
+    plt.ylabel('Winnings')
+
+    median = np.median(array, axis=0)
+    std = array.std(axis=0)
+
+    plt.plot(median)
+    plt.plot(median+std)
+    plt.plot(median-std)
+    plt.show()
+    #plt.savefig('figure_2.png')
+    plt.clf()
   		  	   		 	   		  		  		    	 		 		   		 		  
 def test_code():  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
     Method to test your code  		  	   		 	   		  		  		    	 		 		   		 		  
     """  		  	   		 	   		  		  		    	 		 		   		 		  
-    win_prob = 0.474  # set appropriately to the probability of a win
+    win_prob = (18/38)  # set appropriately to the probability of a win
     np.random.seed(gtid())  # do this only once  		  	   		 	   		  		  		    	 		 		   		 		  
-    print(get_spin_result(win_prob))  # test the roulette spin  		  	   		 	   		  		  		    	 		 		   		 		  
-    # add your code here to implement the experiments  		  	   		 	   		  		  		    	 		 		   		 		  
+    #print(balch_episode(10,win_prob)[0])  # test the roulette spin
+    # add your code here to implement the experiments
+    plot_fig_1()
+    plot_fig_2()
+    plot_fig_3()
   		  	   		 	   		  		  		    	 		 		   		 		  
   		  	   		 	   		  		  		    	 		 		   		 		  
 if __name__ == "__main__":  		  	   		 	   		  		  		    	 		 		   		 		  
