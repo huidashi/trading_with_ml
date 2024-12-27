@@ -7,4 +7,5 @@ Course website: http://lucylabs.gatech.edu/ml4t/
 
 Information on using the autograder on buffet0x servers: http://lucylabs.gatech.edu/ml4t/ml4t-software-setup/
 
+Additional information in PDF reports within certain folders
 
